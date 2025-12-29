@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 internal typealias Listener = (MPVView.Track, Boolean) -> Unit
 
-internal class SubTrackDialog(private val player: MPVView) {
+internal class SubTrackDialog(private val player: MPVView, private val trackType: String = TRACK_TYPE, private val isAudio: Boolean = false) {
     private lateinit var binding: DialogTrackBinding
 
     private var tracks = listOf<MPVView.Track>()
@@ -44,7 +44,7 @@ internal class SubTrackDialog(private val player: MPVView) {
     }
 
     fun refresh() {
-        tracks = player.tracks.getValue(TRACK_TYPE)
+        tracks = player.tracks.getValue(trackType)//(TRACK_TYPE)
         selectedMpvId = player.sid
         selectedMpvId2 = player.secondarySid
 
@@ -92,8 +92,15 @@ internal class SubTrackDialog(private val player: MPVView) {
             }
 
             fun bind(track: MPVView.Track, checked: Boolean, disabled: Boolean) {
-                with (textView) {
-                    text = track.name
+                // added codec information
+                val label = if (!track.codec.isNullOrEmpty()) {
+                    "${track.name} (${track.codec})"
+                } else {
+                    track.name
+                }
+
+                with(textView) {
+                    text = label
                     isChecked = checked
                     isEnabled = !disabled
                 }
@@ -124,5 +131,7 @@ internal class SubTrackDialog(private val player: MPVView) {
 
     companion object {
         const val TRACK_TYPE = "sub"
+        // added audio codec information
+        const val AUDIO_TRACK_TYPE = "audio"
     }
 }
