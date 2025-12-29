@@ -207,9 +207,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 updatePlaybackDuration(psc.durationSec)
             }
 
-            cycleAudioBtn.setOnLongClickListener { pickAudio(); true }
+            //cycleAudioBtn.setOnLongClickListener { pickAudio(); true }
             cycleSpeedBtn.setOnLongClickListener { pickSpeed(); true }
-            cycleSubsBtn.setOnLongClickListener { pickSub(); true }
+            //cycleSubsBtn.setOnLongClickListener { pickSub(); true }
             prevBtn.setOnLongClickListener { openPlaylistMenu(pauseForDialog()); true }
             nextBtn.setOnLongClickListener { openPlaylistMenu(pauseForDialog()); true }
             cycleDecoderBtn.setOnLongClickListener { pickDecoder(); true }
