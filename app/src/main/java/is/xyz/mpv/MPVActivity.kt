@@ -189,8 +189,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         with (binding) {
             prevBtn.setOnClickListener { playlistPrev() }
             nextBtn.setOnClickListener { playlistNext() }
-            cycleAudioBtn.setOnClickListener { cycleAudio() }
-            cycleSubsBtn.setOnClickListener { cycleSub() }
+            // remove cycleAudio/Sub and replace with pickAudio/Sub for use with AndroidTV
+            //cycleAudioBtn.setOnClickListener { cycleAudio() }
+            //cycleSubsBtn.setOnClickListener { cycleSub() }
+            cycleAudioBtn.setOnClickListener { pickAudio(); true }
+            cycleSubsBtn.setOnClickListener { pickSub(); true }
             playBtn.setOnClickListener { player.cyclePause() }
             cycleDecoderBtn.setOnClickListener { player.cycleHwdec() }
             cycleSpeedBtn.setOnClickListener { cycleSpeed() }
@@ -832,9 +835,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun interceptDpad(ev: KeyEvent): Boolean {
-        if (btnSelected == -1) { // UP and DOWN are always grabbed and overridden
+        if (btnSelected == -1) { // DOWN is always grabbed and overridden
             when (ev.keyCode) {
-                KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> {
+                // removed UP for use with input.conf
+                //KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> {
+                KeyEvent.KEYCODE_DPAD_DOWN -> {
                     if (ev.action == KeyEvent.ACTION_DOWN) { // activate dpad navigation
                         btnSelected = 0
                         updateSelectedDpadButton()
@@ -848,7 +853,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         // this runs when dpad navigation is active:
         when (ev.keyCode) {
-            KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> {
+            // removed UP for use with input.conf
+            //KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> {
+            KeyEvent.KEYCODE_DPAD_DOWN -> {
                 if (ev.action == KeyEvent.ACTION_DOWN) { // deactivate dpad navigation
                     btnSelected = -1
                     updateSelectedDpadButton()
@@ -1190,8 +1197,25 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             create().show()
         }
     }
+    // updated to have audio codec information show up
+    private fun pickAudio() {
+        val restore = pauseForDialog()
+        val impl = SubTrackDialog(player, SubTrackDialog.AUDIO_TRACK_TYPE, true)
+        lateinit var dialog: AlertDialog
+        impl.listener = { it, _ ->
+            player.aid = it.mpvId
+            dialog.dismiss()
+            trackSwitchNotification { TrackData(it.mpvId, SubTrackDialog.AUDIO_TRACK_TYPE) }
+        }
 
-    private fun pickAudio() = selectTrack("audio", { player.aid }, { player.aid = it })
+        dialog = with (AlertDialog.Builder(this)) {
+            val inflater = LayoutInflater.from(context)
+            setView(impl.buildView(inflater))
+            setOnDismissListener { restore() }
+            create()
+        }
+        dialog.show()
+    }
 
     private fun pickSub() {
         val restore = pauseForDialog()
