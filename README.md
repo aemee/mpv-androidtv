@@ -8,6 +8,8 @@ This is just a couple of tweaks of build 2025-12-27 that I find useful for my an
     - I find the cycling to be redundant, not to mention, painful to cycle through expecially when you cant long press
 - added audio and subtitle codec information to the selection dialog
   - mostly so I can select my desired audio/subtitle track
+- added a toggle stretch button next to the top settings button
+  - just wanted this button to exist
 ---
 These changes are messy since it was tweaked for an earlier build but they seem to work how I want it to on this build as well. I also recommend using the following lua scripts:
 - [SmartSkip](https://github.com/Eisa01/mpv-scripts/?tab=readme-ov-file#smartskip)
