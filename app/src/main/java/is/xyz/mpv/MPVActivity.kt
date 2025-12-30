@@ -199,6 +199,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             cycleSpeedBtn.setOnClickListener { cycleSpeed() }
             topLockBtn.setOnClickListener { lockUI() }
             topPiPBtn.setOnClickListener { goIntoPiP() }
+            topStretchBtn.setOnClickListener { toggleVideoStretch() } // toggle keepaspect no|yes
             topMenuBtn.setOnClickListener { openTopMenu() }
             unlockBtn.setOnClickListener { unlockUI() }
             playbackDurationTxt.setOnClickListener {
@@ -1372,6 +1373,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         dialog.show()
     }
 
+    private fun toggleVideoStretch() {
+        MPVLib.command(arrayOf("cycle-values", "keepaspect", "no", "yes"))
+        true
+    }
+
     private fun openTopMenu() {
         val restoreState = pauseForDialog()
 
@@ -1445,7 +1451,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                     autoRotationMode = "manual"
                     cycleOrientation()
                     true
-                }
+                }/*,
+                MenuItem(R.id.toggleVideoStretch) {
+                    MPVLib.command(arrayOf("cycle-values", "keepaspect", "no", "yes"))
+                    true
+                }*/
         )
 
         if (!isPlayingAudio)
